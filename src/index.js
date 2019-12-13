@@ -24,6 +24,7 @@ function onRequest(req, res) {
 
 	 - status
 	 - cors
+	 - location
 	 - type
 	 - body
 	 */
@@ -57,8 +58,13 @@ function onRequest(req, res) {
 				headers['access-control-allow-headers'] = reqCorsHeaders;
 			}
 		}
+
 		if (query.type) {
 			headers['content-type'] = query.type;
+		}
+
+		if (query.location) {
+			headers['location'] = query.location;
 		}
 
 		const body = query.body || '';

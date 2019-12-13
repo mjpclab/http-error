@@ -33,8 +33,11 @@ Specify response status code.
 ## cors
 Specify if respond CORS headers.
 
+## location
+Specify response Location header.
+
 ## type
-Specify response Content-Type.
+Specify response Content-Type header.
 
 ## body
 Specify response body.
