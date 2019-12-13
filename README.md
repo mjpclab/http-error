@@ -1,3 +1,4 @@
+# http-error
 This package is a http server to simulate network or server errors.
 
 # Startup arguments
@@ -12,6 +13,12 @@ Host to listen on.
 
 ## -port
 Port to listen on. Defaults to 8080.
+
+# Startup example
+listen on port 3000
+```sh
+node src/index.js -port 3000
+```
 
 # Query string parameters
 
@@ -41,3 +48,9 @@ Specify response Content-Type header.
 
 ## body
 Specify response body.
+
+# Query string example
+delay 3 seconds, and response with status 500:
+```
+http://localhost:8000/?wait=3000&status=500
+```
