@@ -37,6 +37,28 @@ function onRequest(req, res) {
 		return;
 	}
 
+	const status = isFinite(query.status) ? parseInt(query.status) : 200;
+
+	const headers = {};
+
+	if (query.cors) {
+		Object.assign(headers, corsHeaders);
+		const reqCorsHeaders = req.headers['access-control-request-headers'];
+		if (reqCorsHeaders) {
+			headers['access-control-allow-headers'] = reqCorsHeaders;
+		}
+	}
+
+	if (query.type) {
+		headers['content-type'] = query.type;
+	}
+
+	if (query.location) {
+		headers['location'] = query.location;
+	}
+
+	const body = query.body || '';
+
 	const serve = function() {
 		if (query.reset) {
 			socket.destroy();
@@ -47,27 +69,6 @@ function onRequest(req, res) {
 			socket.end();
 			return;
 		}
-
-		const status = isFinite(query.status) ? parseInt(query.status) : 200;
-
-		const headers = {};
-		if (query.cors) {
-			Object.assign(headers, corsHeaders);
-			const reqCorsHeaders = req.headers['access-control-request-headers'];
-			if (reqCorsHeaders) {
-				headers['access-control-allow-headers'] = reqCorsHeaders;
-			}
-		}
-
-		if (query.type) {
-			headers['content-type'] = query.type;
-		}
-
-		if (query.location) {
-			headers['location'] = query.location;
-		}
-
-		const body = query.body || '';
 
 		const date = (new Date()).toUTCString();
 		headers['date'] = date;
