@@ -1,0 +1,11 @@
+{
+  "name": "http-error",
+  "version": "0.0.1",
+  "description": "http server that simulate errors",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "MJ PC Lab",
+  "license": "ISC"
+}
