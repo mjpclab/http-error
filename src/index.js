@@ -33,7 +33,7 @@ function onRequest(req, res) {
 	const reqUrl = url.parse(req.url, true);
 	const query = reqUrl.query;
 
-	if (query.stuck) {
+	if (query.stuck !== undefined) {
 		return;
 	}
 
@@ -41,7 +41,7 @@ function onRequest(req, res) {
 
 	const headers = {};
 
-	if (query.cors) {
+	if (query.cors !== undefined) {
 		Object.assign(headers, corsHeaders);
 		const reqCorsHeaders = req.headers['access-control-request-headers'];
 		if (reqCorsHeaders) {
@@ -60,12 +60,12 @@ function onRequest(req, res) {
 	const body = query.body || '';
 
 	const serve = function() {
-		if (query.reset) {
+		if (query.reset !== undefined) {
 			socket.destroy();
 			return;
 		}
 
-		if (query.silent) {
+		if (query.silent !== undefined) {
 			socket.end();
 			return;
 		}
