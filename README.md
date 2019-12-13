@@ -1,5 +1,18 @@
 This package is a http server to simulate network or server errors.
 
+# Startup arguments
+## -cert
+Certificate file path.
+
+## -key
+Certificate key file path.
+
+## -host
+Host to listen on.
+
+## -port
+Port to listen on. Defaults to 8080.
+
 # Query string parameters
 
 ## stuck

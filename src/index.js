@@ -1,6 +1,12 @@
 #!/usr/bin/env node
 const http = require('http');
+const https = require('https');
 const url = require('url');
+const fs = require('fs');
+
+const args = require('./args');
+const appOptions = args.parse();
+const {host, port, cert, key} = appOptions;
 
 const corsHeaders = {
 	'access-control-allow-credentials': 'true',
@@ -73,6 +79,14 @@ function onRequest(req, res) {
 	serve();
 }
 
-const server = http.createServer();
+let server;
+if (cert && key) {
+	server = https.createServer({
+		cert: fs.readFileSync(cert),
+		key: fs.readFileSync(key)
+	})
+} else {
+	server = http.createServer()
+}
 server.on('request', onRequest);
-server.listen(8000);
+server.listen(port, host);
