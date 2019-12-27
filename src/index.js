@@ -95,5 +95,6 @@ if (cert && key) {
 } else {
 	server = http.createServer()
 }
+server.timeout = 0;
 server.on('request', onRequest);
 server.listen(port, host);
