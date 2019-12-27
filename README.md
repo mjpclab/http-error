@@ -49,8 +49,17 @@ Specify response Content-Type header.
 ## body
 Specify response body.
 
+# Specify separated parameters for CORS preflight (OPTIONS method)
+Prepending `_` before regular parameter name makes it as preflight only parameter,
+and regular parameters has no more effect on preflight requests.
+
 # Query string example
 delay 3 seconds, and response with status 500:
 ```
 http://localhost:8000/?wait=3000&status=500
+```
+
+delay 5 seconds for CORS preflight, and stuck for regular request:
+```
+http://localhost:8000/?_wait=5000&_cors&stuck
 ```

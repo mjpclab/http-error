@@ -6,7 +6,27 @@ const corsHeaders = {
 	'access-control-allow-methods': 'GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE, CONNECT'
 };
 
-function getInitData(query) {
+function getQuery(req, rawQuery) {
+	let query = rawQuery;
+
+	if (req.method === 'OPTIONS') {
+		let hasPreflightQuery = false;
+		const preflightQuery = {};
+		for (const [key, value] of Object.entries(query)) {
+			if (key[0] === '_') {
+				hasPreflightQuery = true;
+				preflightQuery[key.substr(1)] = value;
+			}
+		}
+		if (hasPreflightQuery) {
+			query = preflightQuery
+		}
+	}
+
+	return query;
+}
+
+function getInitData(req, query) {
 	const status = isFinite(query.status) ? parseInt(query.status) : 200;
 
 	const headers = {};
@@ -29,7 +49,7 @@ function getInitData(query) {
 
 	headers['date'] = (new Date()).toUTCString();
 
-	const body = query.body || '';
+	const body = query.body;
 
 	return {
 		status,
@@ -55,7 +75,7 @@ function onRequest(req, res) {
 
 	const socket = req.socket;
 	const reqUrl = url.parse(req.url, true);
-	const query = reqUrl.query;
+	const query = getQuery(req, reqUrl.query);
 
 	if (query.stuck !== undefined) {
 		return;
