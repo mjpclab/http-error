@@ -6,7 +6,7 @@ const corsHeaders = {
 	'access-control-allow-methods': 'GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE, CONNECT'
 };
 
-function getQuery(req, rawQuery) {
+const getQuery = (req, rawQuery) => {
 	let query = rawQuery;
 
 	if (req.method === 'OPTIONS') {
@@ -24,9 +24,9 @@ function getQuery(req, rawQuery) {
 	}
 
 	return query;
-}
+};
 
-function getInitData(req, query) {
+const getInitData = (req, query) => {
 	const status = isFinite(query.status) ? parseInt(query.status) : 200;
 
 	const headers = {};
@@ -56,9 +56,9 @@ function getInitData(req, query) {
 		headers,
 		body
 	}
-}
+};
 
-function onRequest(req, res) {
+const handler = (req, res, options) => {
 	/*
 	query
 	 - stuck
@@ -81,7 +81,7 @@ function onRequest(req, res) {
 		return;
 	}
 
-	const serve = function() {
+	const serve = function () {
 		if (query.reset !== undefined) {
 			socket.destroy();
 			return;
@@ -101,10 +101,11 @@ function onRequest(req, res) {
 	if (isFinite(query.wait)) {
 		const wait = parseInt(query.wait);
 		setTimeout(serve, wait);
-		return;
+	} else {
+		serve();
 	}
+};
 
-	serve();
-}
+const getHandler = options => (req, res) => handler(req, res, options);
 
-module.exports = onRequest;
+module.exports = getHandler;

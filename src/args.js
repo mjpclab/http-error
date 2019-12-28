@@ -46,6 +46,4 @@ const parse = (...args) => {
 	return result;
 };
 
-module.exports = {
-	parse
-};
+module.exports = parse;
