@@ -4,12 +4,26 @@ const defaultArg = {
 	host: undefined,
 	port: 8080,
 	cert: undefined,
-	key: undefined
+	key: undefined,
 };
+
+const availArgNames = Object.keys(defaultArg);
 
 const RE_DASH_PREFIX = /^-+/;
 
-function parse(...args) {
+const getArgName = arg => {
+	const argName = arg.replace(RE_DASH_PREFIX, '');
+	if (argName in defaultArg) {
+		return argName;
+	}
+
+	const argNames = availArgNames.filter(name => name.startsWith(argName));
+	if (argNames.length === 1) {
+		return argNames[0];
+	}
+};
+
+const parse = (...args) => {
 	if (args.length === 0) {
 		args = process.argv.slice(2);
 	}
@@ -18,9 +32,9 @@ function parse(...args) {
 
 	let argName = '';
 	for (const arg of args) {
-		const argNoDash = arg.replace(RE_DASH_PREFIX, '');
-		if (argNoDash in defaultArg) {
-			argName = argNoDash;
+		const name = getArgName(arg);
+		if (name) {
+			argName = name;
 			continue
 		}
 
@@ -30,7 +44,7 @@ function parse(...args) {
 	}
 
 	return result;
-}
+};
 
 module.exports = {
 	parse
