@@ -120,6 +120,15 @@ const handler = (req, res, options) => {
 				} else {
 					res.end();
 				}
+			} else if (stats.isDirectory()) {
+				const finalStatus = status || 200;
+				res.writeHead(finalStatus, headers);
+				const subFiles = fs.readdirSync(filePath);
+				for (const fname of subFiles) {
+					res.write(fname);
+					res.write('\n');
+				}
+				res.end();
 			} else {
 				const finalStatus = status || 404;
 				res.writeHead(finalStatus, headers);
