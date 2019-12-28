@@ -95,26 +95,37 @@ const handler = (req, res, options) => {
 		}
 
 		const {status, headers, body} = getInitData(req, query);
+
 		if (body) {
 			const finalStatus = status || 200;
 			res.writeHead(finalStatus, headers);
 			res.end(body);
-		} else {
-			const {root} = options;
-			const filePath = path.join(root, reqUrl.pathname);
-			fs.stat(filePath, function (err, stats) {
-				if (!err && stats.isFile()) {
-					const finalStatus = status || 200;
-					res.writeHead(finalStatus, headers);
+			return;
+		}
+
+		const {root} = options;
+		const filePath = path.join(root, reqUrl.pathname);
+		fs.stat(filePath, function (err, stats) {
+			if (err) {
+				const finalStatus = status || 500;
+				res.writeHead(finalStatus, headers);
+				res.end();
+			} else if (stats.isFile()) {
+				const finalStatus = status || 200;
+				res.writeHead(finalStatus, headers);
+				const {method} = req;
+				if (method === 'GET' || method === 'POST') {
 					const fstream = fs.createReadStream(filePath);
 					fstream.pipe(res);
 				} else {
-					const finalStatus = status || 404;
-					res.writeHead(finalStatus, headers);
 					res.end();
 				}
-			});
-		}
+			} else {
+				const finalStatus = status || 404;
+				res.writeHead(finalStatus, headers);
+				res.end();
+			}
+		});
 	};
 
 	if (isFinite(query.wait)) {
