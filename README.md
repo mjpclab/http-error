@@ -14,6 +14,9 @@ Host to listen on.
 ## -port
 Port to listen on. Defaults to 8080.
 
+## -root
+Root directory for serving file content.
+
 # Startup example
 listen on port 3000
 ```sh
@@ -47,7 +50,7 @@ Specify response Location header.
 Specify response Content-Type header.
 
 ## body
-Specify response body.
+Specify response body instead of reading from file.
 
 # Specify separated parameters for CORS preflight (OPTIONS method)
 Prepending `_` before regular parameter name makes it as preflight only parameter,

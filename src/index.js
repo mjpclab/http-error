@@ -3,11 +3,12 @@
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
+const process = require('process');
 
 const parseArgs = require('./args');
 const getHandler = require('./handler');
 
-const {host, port, cert, key} = parseArgs();
+const {host, port, cert, key, root} = parseArgs();
 
 let server;
 if (cert && key) {
@@ -18,6 +19,11 @@ if (cert && key) {
 } else {
 	server = http.createServer()
 }
+
 server.timeout = 0;
-server.on('request', getHandler());
+const handler = getHandler({
+	root: root || process.cwd()
+});
+server.on('request', handler);
+
 server.listen(port, host);

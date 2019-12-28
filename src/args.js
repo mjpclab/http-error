@@ -5,6 +5,7 @@ const defaultArg = {
 	port: 8080,
 	cert: undefined,
 	key: undefined,
+	root: '',
 };
 
 const availArgNames = Object.keys(defaultArg);

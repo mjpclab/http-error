@@ -1,4 +1,6 @@
 const url = require('url');
+const path = require('path');
+const fs = require('fs');
 
 const corsHeaders = {
 	'access-control-allow-credentials': 'true',
@@ -27,7 +29,7 @@ const getQuery = (req, rawQuery) => {
 };
 
 const getInitData = (req, query) => {
-	const status = isFinite(query.status) ? parseInt(query.status) : 200;
+	const status = isFinite(query.status) ? parseInt(query.status) : undefined;
 
 	const headers = {};
 
@@ -93,9 +95,26 @@ const handler = (req, res, options) => {
 		}
 
 		const {status, headers, body} = getInitData(req, query);
-
-		res.writeHead(status, headers);
-		res.end(body);
+		if (body) {
+			const finalStatus = status || 200;
+			res.writeHead(finalStatus, headers);
+			res.end(body);
+		} else {
+			const {root} = options;
+			const filePath = path.join(root, reqUrl.pathname);
+			fs.stat(filePath, function (err, stats) {
+				if (!err && stats.isFile()) {
+					const finalStatus = status || 200;
+					res.writeHead(finalStatus, headers);
+					const fstream = fs.createReadStream(filePath);
+					fstream.pipe(res);
+				} else {
+					const finalStatus = status || 404;
+					res.writeHead(finalStatus, headers);
+					res.end();
+				}
+			});
+		}
 	};
 
 	if (isFinite(query.wait)) {
