@@ -83,7 +83,7 @@ const handler = (req, res, options) => {
 		return;
 	}
 
-	const serve = function () {
+	const serve = function() {
 		if (query.reset !== undefined) {
 			socket.destroy();
 			return;
@@ -103,37 +103,35 @@ const handler = (req, res, options) => {
 			return;
 		}
 
+		const {method} = req;
 		const {root} = options;
 		const filePath = path.join(root, reqUrl.pathname);
-		fs.stat(filePath, function (err, stats) {
+		fs.stat(filePath, function(err, stats) {
 			if (err) {
 				const finalStatus = status || 500;
 				res.writeHead(finalStatus, headers);
-				res.end();
 			} else if (stats.isFile()) {
 				const finalStatus = status || 200;
 				res.writeHead(finalStatus, headers);
-				const {method} = req;
 				if (method === 'GET' || method === 'POST') {
 					const fstream = fs.createReadStream(filePath);
-					fstream.pipe(res);
-				} else {
-					res.end();
+					fstream.pipe(res, false);
 				}
 			} else if (stats.isDirectory()) {
 				const finalStatus = status || 200;
 				res.writeHead(finalStatus, headers);
-				const subFiles = fs.readdirSync(filePath);
-				for (const fname of subFiles) {
-					res.write(fname);
-					res.write('\n');
+				if (method === 'GET' || method === 'POST') {
+					const subFiles = fs.readdirSync(filePath);
+					for (const fname of subFiles) {
+						res.write(fname);
+						res.write('\n');
+					}
 				}
-				res.end();
 			} else {
 				const finalStatus = status || 404;
 				res.writeHead(finalStatus, headers);
-				res.end();
 			}
+			res.end();
 		});
 	};
 
